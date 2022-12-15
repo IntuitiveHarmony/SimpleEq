@@ -190,19 +190,24 @@ juce::AudioProcessorValueTreeState::ParameterLayout
         juce::AudioProcessorValueTreeState::ParameterLayout layout;
         
         layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq",
-                                                               "LowCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20.f));
+                                                               "LowCut Freq",
+                                                               juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20.f));
         
         layout.add(std::make_unique<juce::AudioParameterFloat>("HighCut Freq",
-                                                               "HighCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20000.f));
+                                                               "HighCut Freq",
+                                                               juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20000.f));
         
         layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Freq",
-                                                               "Peak Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 750.f));
+                                                               "Peak Freq",
+                                                               juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 750.f));
         
         layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Gain",
-                                                               "Peak Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f));
+                                                               "Peak Gain",
+                                                               juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f));
         
         layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Quality",
-                                                               "Peak Quality", juce::NormalisableRange<float>(0.1f, 10.f, 0.5f, 1.f), 1.f));
+                                                               "Peak Quality",
+                                                               juce::NormalisableRange<float>(0.1f, 10.f, 0.5f, 1.f), 1.f));
         
         juce::StringArray stringArray;
         for(int i = 0; i < 4; ++i) {
