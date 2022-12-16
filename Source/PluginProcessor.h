@@ -55,13 +55,29 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    
-    static juce::AudioProcessorValueTreeState::ParameterLayout
-        createParameterLayout();
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//  creating the parameter layout
+
+    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     juce::AudioProcessorValueTreeState apvts {*this, nullptr, "Parameters", createParameterLayout()};
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
 private:
+    
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//  aliases for the namespaces
+    
+    using Filter = juce::dsp::IIR::Filter<float>;
+    
+    using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>;
+    
+    using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, CutFilter>;
+    
+    //stereo processing
+    MonoChain leftChain, rightChain;
+    
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEqAudioProcessor)
 };
