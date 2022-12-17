@@ -49,10 +49,55 @@ using Coefficients = Filter::CoefficientsPtr;
 void updateCoefficients(Coefficients& old, const Coefficients& replacements);
 
 Coefficients makePeakFilter(const ChainSettings& chainSettings, double sampleRate);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//helper function for update coefficients
 
 
+template<int Index, typename ChainType, typename CoefficientType>
+void update(ChainType& chain, const CoefficientType& coefficients)
+{
+    updateCoefficients(chain.template get<Index>().coefficients, coefficients[Index]);
+    chain.template setBypassed<Index>(false);
+}
 
+template<typename ChainType, typename CoefficientType>
+void updateCutFilter(ChainType& leftLowCut, const CoefficientType& cutCoefficients, const Slope& lowCutSlope)
+{
+    leftLowCut.template setBypassed<0>(true);
+    leftLowCut.template setBypassed<1>(true);
+    leftLowCut.template setBypassed<2>(true);
+    leftLowCut.template setBypassed<3>(true);
+    
+    switch( lowCutSlope )
+    {
+        case Slope_48:
+        {
+            update<3>(leftLowCut, cutCoefficients);
+        }
+        case Slope_36:
+        {
+            update<2>(leftLowCut, cutCoefficients);
+        }
+        case Slope_24:
+        {
+            update<1>(leftLowCut, cutCoefficients);
+        }
+        case Slope_12:
+        {
+            update<0>(leftLowCut, cutCoefficients);
+        }
+    }
+}
+
+inline auto makeLowCutFilter(const ChainSettings& chainSettings, double sampleRate )
+{
+    return juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(chainSettings.lowCutFreq, sampleRate, 2 * (chainSettings.lowCutSlope + 1));
+}
+
+inline auto makeHighCutFilter(const ChainSettings& chainSettings, double sampleRate )
+{
+    return juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(chainSettings.highCutFreq, sampleRate, 2 * (chainSettings.highCutSlope + 1));
+}
 //==============================================================================
 /**
 */
@@ -113,44 +158,7 @@ private:
     //Update the peak filter with chain settings
     void updatePeakFilter(const ChainSettings& chainSettings);
     
-    //helper function for update coefficients
- 
-    
-    template<int Index, typename ChainType, typename CoefficientType>
-    void update(ChainType& chain, const CoefficientType& coefficients)
-    {
-        updateCoefficients(chain.template get<Index>().coefficients, coefficients[Index]);
-        chain.template setBypassed<Index>(false);
-    }
-    
-    template<typename ChainType, typename CoefficientType>
-    void updateCutFilter(ChainType& leftLowCut, const CoefficientType& cutCoefficients, const Slope& lowCutSlope)
-    {
-        leftLowCut.template setBypassed<0>(true);
-        leftLowCut.template setBypassed<1>(true);
-        leftLowCut.template setBypassed<2>(true);
-        leftLowCut.template setBypassed<3>(true);
-        
-        switch( lowCutSlope )
-        {
-            case Slope_48:
-            {
-                update<3>(leftLowCut, cutCoefficients);
-            }
-            case Slope_36:
-            {
-                update<2>(leftLowCut, cutCoefficients);
-            }
-            case Slope_24:
-            {
-                update<1>(leftLowCut, cutCoefficients);
-            }
-            case Slope_12:
-            {
-                update<0>(leftLowCut, cutCoefficients);
-            }
-        }
-    }
+   
     
     //update all the filters
     void updateLowCutFilters(const ChainSettings& chainSettings);
