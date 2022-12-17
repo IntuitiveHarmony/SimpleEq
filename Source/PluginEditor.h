@@ -41,12 +41,12 @@ private:
     
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CustomRotarySlider peakFreqSlider,
-    peakGainSlider,
-    peakQualitySlider,
-    lowCutFreqSlider,
-    highCutFreqSlider,
-    lowCutSlopeSlider,
-    highCutSlopeSlider;
+        peakGainSlider,
+        peakQualitySlider,
+        lowCutFreqSlider,
+        highCutFreqSlider,
+        lowCutSlopeSlider,
+        highCutSlopeSlider;
     
     using APVTS = juce::AudioProcessorValueTreeState;
     using Attachment = APVTS::SliderAttachment;
@@ -60,6 +60,8 @@ private:
         highCutSlopeSliderAttachment;
     
     std::vector<juce::Component*> getComps();
+    
+    MonoChain monoChain;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEqAudioProcessorEditor)
