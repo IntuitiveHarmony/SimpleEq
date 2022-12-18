@@ -38,6 +38,14 @@ struct RotarySliderWithLabels : juce::Slider
     {
         setLookAndFeel(nullptr);
     }
+    //text for min and max on knob (slider)
+    struct LabelPos
+    {
+        float pos;
+        juce::String label;
+    };
+    
+    juce::Array<LabelPos> labels;
     
     //custom visuals
     void paint(juce::Graphics& g) override;
