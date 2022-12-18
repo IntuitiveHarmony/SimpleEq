@@ -81,6 +81,8 @@ private:
     juce::Atomic<bool> parametersChanged { false };
     
     MonoChain monoChain;
+//keep the response curve after close and reload
+    void updateChain();
 };
 //~~~~^^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
