@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="eFiMXK" name="SimpleEq" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="17">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="17"
+              companyName="Intuitive Harmony" pluginVST3Category="EQ,Filter">
   <MAINGROUP id="mRySbE" name="SimpleEq">
     <GROUP id="{713C3ED9-7D6A-0043-8AB6-4421E10AA4A0}" name="Source">
       <FILE id="rCaEFn" name="PluginProcessor.cpp" compile="1" resource="0"
