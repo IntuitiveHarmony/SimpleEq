@@ -30,27 +30,54 @@ void LookAndFeel::drawRotarySlider(juce::Graphics & g,
     g.setColour(Colour(0u, 198u, 255u));
     g.drawEllipse(bounds, 1.f);
     
-    auto center =bounds.getCentre();
+    //Text for the knobs
+    if( auto* rswl = dynamic_cast<RotarySliderWithLabels*>(&slider))
+    {
+        auto center = bounds.getCentre();
+        //path for the marker to travel
+        Path p;
+        //Marker for knob
+        Rectangle<float> r;
+        r.setLeft(center.getX() - 2);
+        r.setRight(center.getX() +2 );
+        r.setTop(bounds.getY());
+        r.setBottom(center.getY() - rswl->getTextHeight() * 1.5);
+        
+        p.addRoundedRectangle(r, 2.f);
+        
+        //let's rotate the knob
+        // keep it from overlapping
+        jassert(rotaryStartAngle < rotaryEndAngle);
+        
+        auto sliderAngRad = jmap(sliderPosProportional, 0.f, 1.f, rotaryStartAngle, rotaryEndAngle);
+        
+        p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
+        
+        g.fillPath(p);
+        
+        g.setFont(rswl->getTextHeight());
+        //get text
+        auto text = rswl->getDisplayString();
+        auto strWidth = g.getCurrentFont().getStringWidth(text);
+        
+        r.setSize(strWidth + 4, rswl->getTextHeight() + 2);
+        r.setCentre(bounds.getCentre());
+        
+        g.setColour(Colours::black);
+        g.fillRect(r);
+        
+        g.setColour(Colours::white);
+        
+        g.drawFittedText(text, r.toNearestInt(), juce::Justification::centred, 1);
+        
+        
+    }
     
-    //path for the marker to travel
-    Path p;
-    //Marker for knob
-    Rectangle<float> r;
-    r.setLeft(center.getX() - 2);
-    r.setRight(center.getX() +2 );
-    r.setTop(bounds.getY());
-    r.setBottom(center.getY());
     
-    //let's rotate the knob
-    p.addRectangle(r);
-    // keep it from overlapping
-    jassert(rotaryStartAngle < rotaryEndAngle);
+   
+
     
-    auto sliderAngRad = jmap(sliderPosProportional, 0.f, 1.f, rotaryStartAngle, rotaryEndAngle);
-    
-    p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
-    
-    g.fillPath(p);
+
     
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,6 +124,13 @@ juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const
     
     return r;
 }
+
+
+juce::String RotarySliderWithLabels::getDisplayString() const
+{
+    return juce::String(getValue());
+}
+
 //==============================================================================
 ResponseCurveComponent::ResponseCurveComponent(SimpleEqAudioProcessor& p) : audioProcessor(p)
 {
