@@ -8,7 +8,80 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void LookAndFeel::drawRotarySlider(juce::Graphics & g,
+                                   int x,
+                                   int y,
+                                   int width,
+                                   int height,
+                                   float sliderPosProportional,
+                                   float rotaryStartAngle,
+                                   float rotaryEndAngle,
+                                   juce::Slider & slider)
+{
+    using namespace juce;
+    
+    
+    auto bounds = Rectangle<float>(x, y, width, height);
+    //knob background
+    g.setColour(Colour(211u, 0u, 255u));
+    g.fillEllipse(bounds);
+    //this is the border on the knobs
+    g.setColour(Colour(0u, 198u, 255u));
+    g.drawEllipse(bounds, 1.f);
+    
+    auto center =bounds.getCentre();
+    
+    //path for the marker to travel
+    Path p;
+    //Marker for knob
+    Rectangle<float> r;
+    r.setLeft(center.getX() - 2);
+    r.setRight(center.getX() +2 );
+    r.setTop(bounds.getY());
+    r.setBottom(center.getY());
+    
+    //let's rotate the knob
+    p.addRectangle(r);
+    // keep it from overlapping
+    jassert(rotaryStartAngle < rotaryEndAngle);
+    
+    auto sliderAngRad = jmap(sliderPosProportional, 0.f, 1.f, rotaryStartAngle, rotaryEndAngle);
+    
+    p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
+    
+    g.fillPath(p);
+    
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+void RotarySliderWithLabels::paint(juce::Graphics &g)
+{
+    using namespace juce;
+    //setting the range of the slider drawing like face of clock
+    auto startAng = degreesToRadians(180.f + 45.f);
+    auto endAng = degreesToRadians(180.f - 45.f) + MathConstants<float>::twoPi;
+    
+    auto range = getRange();
+    
+    auto sliderBounds = getSliderBounds();
+    
+    getLookAndFeel().drawRotarySlider(g,
+                                      sliderBounds.getX(),
+                                      sliderBounds.getY(),
+                                      sliderBounds.getWidth(),
+                                      sliderBounds.getHeight(),
+                                      jmap(getValue(), range.getStart(), range.getEnd(), 0.0, 1.0),
+                                      startAng,
+                                      endAng,
+                                      *this);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const
+{
+    return getLocalBounds();
+}
+//==============================================================================
 ResponseCurveComponent::ResponseCurveComponent(SimpleEqAudioProcessor& p) : audioProcessor(p)
 {
     //grab all parameters and listen to them
